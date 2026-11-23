@@ -18,7 +18,7 @@ As tarefas rodam no GitHub Actions. Cada execução começa por uma API ou leitu
 
 ## Configuração de uma vez
 
-1. Abra **Billing and licensing → Budgets and alerts** na conta do GitHub. Confirme que o uso excedente de **GitHub Actions** está bloqueado, por ausência de meio de pagamento ou por um orçamento com limite de US$ 0 e **Stop usage when budget limit is reached**. Em **Settings → Secrets and variables → Actions → Variables** do repositório, registre `ACTIONS_FREE_LIMIT_CONFIRMED=true` depois de verificar esse bloqueio.
+1. Abra **Billing and licensing → Budgets and alerts** na conta do GitHub. Confirme que o uso excedente de **GitHub Actions** está bloqueado, por ausência de meio de pagamento ou por um orçamento com limite de US$ 0 e **Stop usage when budget limit is reached**. Marque a confirmação de limite no formulário ao iniciar cada workflow.
 2. Para usar Browserless, confirme a assinatura **Free** e o saldo no painel do Browserless. Na tela **Secrets** do repositório, crie `BROWSERLESS_TOKEN` e cole ali a chave gerada no provedor. Guarde o valor exclusivamente nesse campo.
 3. Na aba **Variables** do repositório, configure `BROWSERLESS_FREE_CONFIRMED=true` e `BROWSERLESS_ENABLED=true`. Para alterar a região, use `BROWSERLESS_REGION` com `sfo`, `lon` ou `ams`. Deixe `BROWSERLESS_ENABLED` vazio ou defina `false` para desligar.
 4. Execute `browserless-smoke` uma vez com **Permitir Browserless nesta execução** marcado. Se o pré-teste de acesso falhar, confira o código no resumo e o saldo no painel do provedor.
