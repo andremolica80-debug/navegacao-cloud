@@ -40,7 +40,8 @@ jobs:
       - run: npm test
       - run: node src/cli.mjs direct-smoke
       - run: node src/cli.mjs api-smoke
-      - run: npx --no-install playwright-core install --with-deps chromium
+      - name: Usar Chrome do runner
+        run: echo "CHROMIUM_EXECUTABLE_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
       - run: node src/cli.mjs browser-smoke
       - name: Validar Turnstile e reCAPTCHA de teste
         if: inputs.test_captcha

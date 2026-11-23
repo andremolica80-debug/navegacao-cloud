@@ -47,8 +47,9 @@ jobs:
       - name: Preparar Chromium somente para tarefas de navegador
         run: |
           if node --input-type=module -e "import { tasks } from './src/tasks.mjs'; process.exit(tasks.get(process.env.NAV_TASK)?.kind === 'browser' ? 0 : 1)"; then
-            if ! npx --no-install playwright-core install --with-deps chromium; then
-              echo '::warning::Chromium não pôde ser instalado neste runner'
+            chrome_path=$(command -v google-chrome || true)
+            if [ -n "$chrome_path" ]; then
+              echo "CHROMIUM_EXECUTABLE_PATH=$chrome_path" >> "$GITHUB_ENV"
             fi
           fi
       - name: Executar e registrar resultado
