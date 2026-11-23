@@ -1,0 +1,43 @@
+name: Verificar infraestrutura
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_captcha:
+        description: Testar widgets oficiais com chaves de desenvolvimento
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: navegacao-cloud
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Executar testes seguros
+    if: >-
+      github.event.repository.private &&
+      github.ref_name == github.event.repository.default_branch &&
+      vars.ACTIONS_FREE_LIMIT_CONFIRMED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: node src/cli.mjs direct-smoke
+      - run: node src/cli.mjs api-smoke
+      - run: npx --no-install playwright-core install --with-deps chromium
+      - run: node src/cli.mjs browser-smoke
+      - name: Validar Turnstile e reCAPTCHA de teste
+        if: inputs.test_captcha
+        run: npm run test:captcha

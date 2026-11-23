@@ -1,0 +1,15 @@
+{
+  "name": "navegacao-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "test": "node --test test/unit.test.mjs",
+    "test:captcha": "node test/captcha.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.64.1"
+  }
+}

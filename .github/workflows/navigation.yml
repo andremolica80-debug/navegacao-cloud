@@ -1,0 +1,57 @@
+name: Navegação autorizada
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: ID da tarefa cadastrada no repositório
+        required: true
+        default: direct-smoke
+        type: string
+      allow_browserless:
+        description: Permitir Browserless nesta execução
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: navegacao-cloud
+  cancel-in-progress: false
+
+jobs:
+  navigate:
+    name: Executar tarefa
+    if: >-
+      github.event.repository.private &&
+      github.ref_name == github.event.repository.default_branch &&
+      vars.ACTIONS_FREE_LIMIT_CONFIRMED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      NAV_TASK: ${{ inputs.task }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Preparar Chromium somente para tarefas de navegador
+        run: |
+          if node --input-type=module -e "import { tasks } from './src/tasks.mjs'; process.exit(tasks.get(process.env.NAV_TASK)?.kind === 'browser' ? 0 : 1)"; then
+            if ! npx --no-install playwright-core install --with-deps chromium; then
+              echo '::warning::Chromium não pôde ser instalado neste runner'
+            fi
+          fi
+      - name: Executar e registrar resultado
+        run: node src/cli.mjs
+        env:
+          NAV_ALLOW_BROWSERLESS: ${{ inputs.allow_browserless }}
+          BROWSERLESS_ENABLED: ${{ vars.BROWSERLESS_ENABLED }}
+          BROWSERLESS_FREE_CONFIRMED: ${{ vars.BROWSERLESS_FREE_CONFIRMED }}
+          BROWSERLESS_REGION: ${{ vars.BROWSERLESS_REGION }}
+          BROWSERLESS_TOKEN: ${{ inputs.allow_browserless && secrets.BROWSERLESS_TOKEN || '' }}
