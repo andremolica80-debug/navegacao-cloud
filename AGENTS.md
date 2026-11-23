@@ -11,6 +11,6 @@
 
 - Rode `npm ci --ignore-scripts` e `npm test` ao alterar o projeto. Exercite os workflows com `actionlint` quando disponível.
 - Os workflows rodam por acionamento manual na branch padrão do repositório privado. Marque `confirm_free_limit` na execução somente após verificar o bloqueio de gastos adicionais no GitHub.
-- Browserless exige `allow_browserless` na execução, `BROWSERLESS_ENABLED=true`, `BROWSERLESS_FREE_CONFIRMED=true`, validação pela API de uso e `BROWSERLESS_TOKEN` no GitHub Secrets. Mantenha desabilitado se o plano gratuito, sem excedentes faturáveis, estiver incerto ou mudar.
+- Browserless exige `allow_browserless` e `confirm_browserless_free` na execução, validação pela API de uso e `BROWSERLESS_TOKEN` no GitHub Secrets.
 - Limite o acesso direto a duas tentativas e o navegador a uma sessão Browserless por execução. As sessões fecham ao terminar e o serviço tem um teto de 25 segundos. Mantenha as execuções em série e o limite do job em cinco minutos.
 - Leia o resumo no GitHub Actions. Registre status, etapa e códigos de erro controlados. Mantenha credenciais, URLs de conexão autenticadas, cookies, dados de página e mensagens brutas do cliente fora dos logs.

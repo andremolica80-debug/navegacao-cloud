@@ -12,6 +12,10 @@ on:
         required: true
         default: direct-smoke
         type: string
+      confirm_browserless_free:
+        description: Confirmo que o plano Browserless é Free
+        default: false
+        type: boolean
       allow_browserless:
         description: Permitir Browserless nesta execução
         default: false
@@ -56,7 +60,7 @@ jobs:
         run: node src/cli.mjs
         env:
           NAV_ALLOW_BROWSERLESS: ${{ inputs.allow_browserless }}
-          BROWSERLESS_ENABLED: ${{ vars.BROWSERLESS_ENABLED }}
-          BROWSERLESS_FREE_CONFIRMED: ${{ vars.BROWSERLESS_FREE_CONFIRMED }}
+          BROWSERLESS_ENABLED: ${{ inputs.allow_browserless }}
+          BROWSERLESS_FREE_CONFIRMED: ${{ inputs.confirm_browserless_free }}
           BROWSERLESS_REGION: ${{ vars.BROWSERLESS_REGION }}
-          BROWSERLESS_TOKEN: ${{ inputs.allow_browserless && secrets.BROWSERLESS_TOKEN || '' }}
+          BROWSERLESS_TOKEN: ${{ inputs.allow_browserless && inputs.confirm_browserless_free && secrets.BROWSERLESS_TOKEN || '' }}
